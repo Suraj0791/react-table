@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Button } from 'primereact/button';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+
 
 interface Artwork {
   id: number;
@@ -15,6 +19,10 @@ function App() {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+    const paginatorLeft = <Button type="button" icon="pi pi-refresh" text />;
+    const paginatorRight = <Button type="button" icon="pi pi-download" text />;
+
 
   useEffect(() => {
     const fetchArtworks = async () => {
@@ -37,32 +45,17 @@ function App() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1> Artworks Table</h1>
+      <div className="card">
+            <DataTable value={artworks} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} tableStyle={{ minWidth: '50rem' }}
+                    paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                    currentPageReportTemplate="{first} to {last} of {totalRecords}" paginatorLeft={paginatorLeft} paginatorRight={paginatorRight}>
+                <Column field="title" header="Title" style={{ width: '25%' }}></Column>
+                <Column field="place_of_origin" header="Place of Origin" style={{ width: '25%' }}></Column>
+                <Column field="artist_display" header="Artist" style={{ width: '25%' }}></Column>
+                <Column field="representative.name" header="Representative" style={{ width: '25%' }}></Column>
+            </DataTable>
+        </div>
 
-      <table border={1} cellPadding={8} style={{ borderCollapse: "collapse", width: "100%" }}>
-        <thead style={{ backgroundColor: "#f4f4f4" }}>
-          <tr>
-            <th>Title</th>
-            <th>Place of Origin</th>
-            <th>Artist</th>
-            <th>Inscriptions</th>
-            <th>Date Start</th>
-            <th>Date End</th>
-          </tr>
-        </thead>
-        <tbody>
-          {artworks.map((art) => (
-            <tr key={art.id}>
-              <td>{art.title || "—"}</td>
-              <td>{art.place_of_origin || "—"}</td>
-              <td>{art.artist_display || "—"}</td>
-              <td>{art.inscriptions || "—"}</td>
-              <td>{art.date_start || "—"}</td>
-              <td>{art.date_end || "—"}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 }
